@@ -28,6 +28,15 @@ impl Rational {
             denominator,
         }
     }
+    pub(crate) fn from_vec<T: Into<Rational>>(values: Vec<T>) -> Vec<Rational> {
+        values.into_iter().map(|v| v.into()).collect()
+    }
+}
+
+impl From<i32> for Rational {
+    fn from(value: i32) -> Self {
+        Rational::new(value, 1)
+    }
 }
 
 impl Add for Rational {

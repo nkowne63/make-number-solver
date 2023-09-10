@@ -13,13 +13,8 @@ use crate::expression::RationalEvaluatable;
 
 fn main() {
     let (values, target) = prompt_input();
-    let values = values
-        .into_iter()
-        .map(|i| Rational::new(i as i32, 1))
-        .collect();
-    let target = Rational::new(target as i32, 1);
-    for e in ExpressionIter::new(values) {
-        if e.evaluate() == target {
+    for e in ExpressionIter::new(Rational::from_vec(values)) {
+        if e.evaluate() == target.into() {
             println!("{}", e);
             break;
         }

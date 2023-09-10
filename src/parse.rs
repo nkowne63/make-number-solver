@@ -6,13 +6,13 @@ fn get_input() -> String {
     input
 }
 
-pub(crate) fn prompt_input() -> (Vec<u32>, u32) {
+pub(crate) fn prompt_input() -> (Vec<i32>, i32) {
     println!("Input numbers >");
     let input = get_input()
         .split(' ')
-        .map(|s| s.trim().parse::<u32>().unwrap())
+        .map(|s| s.trim().parse().unwrap())
         .collect();
     println!("Input target >");
-    let target = get_input().trim().parse::<u32>().unwrap();
+    let target = get_input().trim().parse().unwrap();
     (input, target)
 }
