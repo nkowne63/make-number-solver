@@ -1,23 +1,17 @@
-pub(crate) mod exp_traverse;
-pub(crate) mod expression;
-pub(crate) mod num_traverse;
-pub(crate) mod ops_traverse;
+pub(crate) mod bin_tree;
+pub(crate) mod new_ops;
+pub(crate) mod new_traverse;
 pub(crate) mod parse;
-pub(crate) mod rational;
 
-use crate::exp_traverse::ExpressionIter;
+use crate::new_traverse::TraversalableNums;
 use crate::parse::prompt_input;
-use crate::rational::Rational;
-
-use crate::expression::RationalEvaluatable;
 
 fn main() {
     let (values, target) = prompt_input();
     println!("calculating...");
-    for e in ExpressionIter::new(Rational::from_vec(values)) {
-        if e.evaluate() == target.into() {
-            println!("answer >");
-            println!("{}", e);
+    for expression in TraversalableNums::new(values) {
+        if expression.evaluate() == Some(target.into()) {
+            println!("{} = {}", expression, target);
             break;
         }
     }
