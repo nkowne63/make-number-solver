@@ -6,11 +6,11 @@ use num_traits::{ops::checked::CheckedMul, CheckedDiv};
 
 use crate::{bin_tree::Node, new_ops::Operator};
 
-pub(crate) fn num_rational(num: i32) -> Rational32 {
+fn num_rational(num: i32) -> Rational32 {
     Rational32::from_integer(num)
 }
 
-pub(crate) fn nums_rational(nums: Vec<i32>) -> Vec<Rational32> {
+fn nums_rational(nums: Vec<i32>) -> Vec<Rational32> {
     nums.into_iter().map(num_rational).collect()
 }
 
