@@ -12,47 +12,37 @@ pub(crate) enum Node {
 
 impl Node {
     // 末端のleafをnodeに変換するのをleafごとに繰り返してベクトル化する
-    fn map_leaf_to_node(&self) -> BTreeSet<Node> {
+    fn map_leaf_to_node(&self) -> Box<dyn Iterator<Item = Node> + '_> {
         match self {
-            Node::Leaf => vec![Node::Node {
-                left: Box::new(Node::Leaf),
-                right: Box::new(Node::Leaf),
-            }]
-            .into_iter()
-            .collect::<BTreeSet<_>>(),
+            Node::Leaf => Box::new(
+                vec![Node::Node {
+                    left: Box::new(Node::Leaf),
+                    right: Box::new(Node::Leaf),
+                }]
+                .into_iter(),
+            ),
             Node::Node { left, right } => {
                 // 左側を末端処理したもの
                 let left_leaves = left.map_leaf_to_node();
-                let mut left_leaves = left_leaves
-                    .into_iter()
-                    .map(|n| Node::Node {
-                        left: Box::new(n),
-                        right: right.clone(),
-                    })
-                    .collect::<BTreeSet<_>>();
+                let left_leaves = left_leaves.map(|n| Node::Node {
+                    left: Box::new(n.clone()),
+                    right: right.clone(),
+                });
                 // 右側を末端処理したもの
                 let right_leaves = right.map_leaf_to_node();
-                let right_leaves = right_leaves
-                    .into_iter()
-                    .map(|n| Node::Node {
-                        left: left.clone(),
-                        right: Box::new(n),
-                    })
-                    .collect::<BTreeSet<_>>();
-                left_leaves.extend(right_leaves);
-                left_leaves
+                let right_leaves = right_leaves.map(|n| Node::Node {
+                    left: left.clone(),
+                    right: Box::new(n.clone()),
+                });
+                Box::new(left_leaves.chain(right_leaves))
             }
         }
     }
     // leafの数がtargetに等しい木構造を全て返す
     pub(crate) fn get_all_tree(target: usize) -> BTreeSet<Node> {
         assert!(target >= 2, "tree size must be greater than 2");
-        let mut result = BTreeSet::new();
-        let node = Node::Node {
-            left: Box::new(Node::Leaf),
-            right: Box::new(Node::Leaf),
-        };
-        result.insert(node);
+        let node = Node::Leaf;
+        let mut result = node.map_leaf_to_node().collect::<BTreeSet<_>>();
         let mut leaf_count = 2;
         while leaf_count < target {
             result = result.iter().flat_map(|n| n.map_leaf_to_node()).collect();
